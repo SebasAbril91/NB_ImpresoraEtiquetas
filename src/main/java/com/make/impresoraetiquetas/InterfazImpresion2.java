@@ -23,7 +23,7 @@ import javax.swing.SwingUtilities;
 
 /**
  *
- * @author sebas
+ * @author Sebas Abril
  */
 public class InterfazImpresion2 extends javax.swing.JFrame {
 

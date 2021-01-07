@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author sebas
+ * @author Sebas Abril
  */
 public class ConfiguracionInicial implements Serializable {
 

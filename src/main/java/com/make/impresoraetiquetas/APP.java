@@ -5,14 +5,14 @@
  */
 package com.make.impresoraetiquetas;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
+ * Antes de ejecutar la aplicación, primero se debe instalar los drivers de la
+ * impresora, cuando se ejecuta la aplicación, seleccionar la impresora con
+ * nombre: 4BARCODE 4B-2054L.
  *
- * @author sebas
+ * @author Sebas Abril
  */
 public class APP {
 
@@ -37,7 +37,6 @@ public class APP {
             interfaz.setVisible(true);
         });
 
-        
     }
 
 }
