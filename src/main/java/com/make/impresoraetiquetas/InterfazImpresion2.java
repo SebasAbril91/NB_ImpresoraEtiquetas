@@ -6,7 +6,9 @@
 package com.make.impresoraetiquetas;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,6 +19,7 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -40,6 +43,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
     private void cargarConfiguracionInicial() {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+
         SwingUtilities.invokeLater(() -> {
             PrintService[] ps = PrintServiceLookup.lookupPrintServices(null, null);
             String[] imp = new String[ps.length];
@@ -47,8 +51,12 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
                 JCmbImpresora.addItem(p.getName());
             }
         });
+    }
 
-//        JCmbImpresora.setSelectedItem(APP.configInit.nombreImpresora);
+    @Override
+    public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().getImage("src/main/java/com/make/resources/logo1.png");
+        return retValue;
     }
 
     /**
@@ -83,7 +91,8 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
         btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Información de envío");
+        setTitle("Etiqueta de envío");
+        setIconImage(getIconImage());
 
         JCmbImpresora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONAR IMPRESORA" }));
         JCmbImpresora.addItemListener(new java.awt.event.ItemListener() {
