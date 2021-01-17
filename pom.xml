@@ -76,5 +76,6 @@
             </plugin>  
         </plugins>  
     </build>
+    
     <name>NB_ImpresoraEtiquetas</name>
 </project>
