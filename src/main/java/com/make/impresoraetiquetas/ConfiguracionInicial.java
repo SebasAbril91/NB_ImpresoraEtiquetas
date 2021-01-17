@@ -14,5 +14,6 @@ import java.io.Serializable;
 public class ConfiguracionInicial implements Serializable {
 
     public Object nombreImpresora = null;
+    public Object txtInformacionContenido = null;
 
 }

@@ -9,8 +9,6 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +19,6 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
@@ -30,7 +27,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Sebas Abril
  */
-public class InterfazImpresion2 extends javax.swing.JFrame {
+public class InterfazImpresion extends javax.swing.JFrame {
 
     private int numLineasInfoEnvio = 0;
     private int numLineasInfoCont = 0;
@@ -38,7 +35,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
     /**
      * Creates new form InterfazImpresion
      */
-    public InterfazImpresion2() {
+    public InterfazImpresion() {
         initComponents();
         cargarConfiguracionInicial();
     }
@@ -48,17 +45,23 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
         this.setResizable(false);
 
         SwingUtilities.invokeLater(() -> {
+            // Lista todos los drivers de impresoras instaladas en el OS.
             PrintService[] ps = PrintServiceLookup.lookupPrintServices(null, null);
-            String[] imp = new String[ps.length];
             for (PrintService p : ps) {
-                JCmbImpresora.addItem(p.getName());
+                cmbDriverImpresora.addItem(p.getName());
+            }
+            // Recupera y selecciona el ultimo driver utilizado.
+            if (APP.configInit.nombreImpresora != null) {
+                cmbDriverImpresora.setSelectedItem(APP.configInit.nombreImpresora);
+            }
+            if (APP.configInit.txtInformacionContenido != null) {
+                txtInfoCont.setText(APP.configInit.txtInformacionContenido.toString());
             }
         });
     }
 
     @Override
     public Image getIconImage() {
-//        Image retValue = Toolkit.getDefaultToolkit().getImage("src/main/java/com/make/impresoraetiquetas/resources/logo1.png");
         Image retValue = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("com/make/impresoraetiquetas/resources/logo1.png"));
         return retValue;
     }
@@ -72,7 +75,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        JCmbImpresora = new javax.swing.JComboBox<>();
+        cmbDriverImpresora = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtMasInformacion = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
@@ -103,11 +106,16 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Etiqueta de envío");
         setIconImage(getIconImage());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
-        JCmbImpresora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONAR IMPRESORA" }));
-        JCmbImpresora.addItemListener(new java.awt.event.ItemListener() {
+        cmbDriverImpresora.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONAR IMPRESORA" }));
+        cmbDriverImpresora.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                JCmbImpresoraItemStateChanged(evt);
+                cmbDriverImpresoraItemStateChanged(evt);
             }
         });
 
@@ -163,6 +171,11 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
 
         txtInfoCont.setColumns(20);
         txtInfoCont.setRows(5);
+        txtInfoCont.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtInfoContFocusLost(evt);
+            }
+        });
         jScrollPane2.setViewportView(txtInfoCont);
 
         jLabel11.setText("Contenido:");
@@ -192,7 +205,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(JCmbImpresora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmbDriverImpresora, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel7)
@@ -240,7 +253,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(JCmbImpresora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbDriverImpresora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -290,7 +303,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBtImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBtImprimirActionPerformed
-        String impresora = JCmbImpresora.getSelectedItem().toString();
+        String impresora = cmbDriverImpresora.getSelectedItem().toString();
         PrintService printService = findPrintService(impresora);
 //        String plantilla = "^XA\n"
 //                + "^FX Plantilla (IMAGEN).\n"
@@ -433,14 +446,14 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
                     "Impresión de etiqueta",
                     JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_JBtImprimirActionPerformed
 
-    private void JCmbImpresoraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JCmbImpresoraItemStateChanged
+    private void cmbDriverImpresoraItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbDriverImpresoraItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             APP.configInit.nombreImpresora = evt.getItem();
+            APP.guardarConfiguracionInicio();
         }
-    }//GEN-LAST:event_JCmbImpresoraItemStateChanged
+    }//GEN-LAST:event_cmbDriverImpresoraItemStateChanged
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         // TODO add your handling code here:
@@ -457,6 +470,7 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         // TODO add your handling code here:
+        formWindowClosing(null);
         System.exit(0);
     }//GEN-LAST:event_btnCerrarActionPerformed
 
@@ -464,6 +478,16 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
         // TODO add your handling code here:
         ckbCodigoBarras.setSelected(true);
     }//GEN-LAST:event_txtCodigoBarrasKeyTyped
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosing
+
+    private void txtInfoContFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtInfoContFocusLost
+        // TODO add your handling code here:
+        APP.configInit.txtInformacionContenido = this.txtInfoCont.getText();
+        APP.guardarConfiguracionInicio();
+    }//GEN-LAST:event_txtInfoContFocusLost
 
     private PrintService findPrintService(String printerName) {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
@@ -617,12 +641,12 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton JBtImprimir;
-    private javax.swing.JComboBox<String> JCmbImpresora;
     private javax.swing.JButton btnCerrar;
     private javax.swing.JButton btnLimpiar;
     private javax.swing.JCheckBox ckbCodigoBarras;
     private javax.swing.JCheckBox ckbFechaEnvio;
     private javax.swing.JCheckBox ckbLogoEnvioFragil;
+    private javax.swing.JComboBox<String> cmbDriverImpresora;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
