@@ -56,7 +56,8 @@ public class InterfazImpresion2 extends javax.swing.JFrame {
 
     @Override
     public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().getImage("src/main/java/com/make/impresoraetiquetas/resources/logo1.png");
+//        Image retValue = Toolkit.getDefaultToolkit().getImage("src/main/java/com/make/impresoraetiquetas/resources/logo1.png");
+        Image retValue = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("com/make/impresoraetiquetas/resources/logo1.png"));
         return retValue;
     }
 

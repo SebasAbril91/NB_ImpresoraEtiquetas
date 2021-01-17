@@ -22,14 +22,25 @@
     
     <build>
         <finalName>ImpresoraEtiquetas</finalName>
+        
+        <resources>
+            <!-- Define un recurso -->
+            <resource>
+                 <!--Directorio del recurso dentro del proyecto Java--> 
+                <directory>src/main/java/com/make/impresoraetiquetas/resources</directory>
+                 <!--Destino que indica donde se han de copiar los recursos dentro del jar--> 
+                <targetPath>com/make/impresoraetiquetas/resources</targetPath>
+            </resource>
+        </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    // Versión de JDK con la cual se ha construido el proyecto
-                    // 11 significa que se utilizó Java11
+                    <!--Versión de JDK con la cual se ha construido el proyecto-->
+                    <!--11 significa que se utilizó Java11-->
                     <source>11</source>
                     <target>11</target>
                 </configuration>
@@ -42,12 +53,12 @@
                 
                 <configuration>            
                     <descriptorRefs>
-                        //Sufijo que se le agregara al fichero JAR ejecutable
+                        <!--Sufijo que se le agregara al fichero JAR ejecutable-->
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>           
                     <archive>
                         <manifest>
-                            //Aqui se establece el nombre de la clase principal
+                            <!--Aqui se establece el nombre de la clase principal-->
                             <mainClass>com.make.impresoraetiquetas.APP</mainClass>
                         </manifest>
                     </archive>
