@@ -166,7 +166,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
 
         jLabel8.setText("Email:");
 
-        jLabel9.setText("Mas informacion:");
+        jLabel9.setText("Mas información:");
 
         txtCiudad.setActionCommand("null");
 
@@ -195,7 +195,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(txtInfoCont);
 
-        jLabel11.setText("Contenido:");
+        jLabel11.setText("Contenido/Remitente:");
 
         ckbLogoEnvioFragil.setSelected(true);
         ckbLogoEnvioFragil.setText("Logo envío FRAGIL");
@@ -310,7 +310,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtCoincidenciaHist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -447,7 +447,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
 
         // Numero de orden.
         int nO_alturaFuente = 30;
-        Point nO_posXY = new Point(5 + posInicialXY.x, 360 + posInicialXY.y);
+        Point nO_posXY = new Point(5 + posInicialXY.x, 370 + posInicialXY.y);
         // Codigo de barra.
         long cB_codigo = 0L;
         int cB_altura = 90;
