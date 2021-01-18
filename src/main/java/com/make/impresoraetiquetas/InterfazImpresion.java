@@ -9,7 +9,10 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.print.Doc;
@@ -19,8 +22,11 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 /**
@@ -44,18 +50,28 @@ public class InterfazImpresion extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
+        String ACTION_KEY = "autocompletar histInfoCont";
+        KeyStroke evento = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK);
+        txtInfoCont.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(evento, ACTION_KEY);
+        txtInfoCont.getActionMap().put(ACTION_KEY, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                txtCoincidenciaHistMouseClicked(null);
+            }
+        });
+
         SwingUtilities.invokeLater(() -> {
             // Lista todos los drivers de impresoras instaladas en el OS.
             PrintService[] ps = PrintServiceLookup.lookupPrintServices(null, null);
-            for (PrintService p : ps) {
-                cmbDriverImpresora.addItem(p.getName());
+            for (PrintService impresora : ps) {
+                cmbDriverImpresora.addItem(impresora.getName());
             }
             // Recupera y selecciona el ultimo driver utilizado.
             if (APP.configInit.nombreImpresora != null) {
                 cmbDriverImpresora.setSelectedItem(APP.configInit.nombreImpresora);
             }
-            if (APP.configInit.txtInformacionContenido != null) {
-                txtInfoCont.setText(APP.configInit.txtInformacionContenido.toString());
+            if (APP.configInit.informacionContenido != null) {
+                txtInfoCont.setText(APP.configInit.informacionContenido);
             }
         });
     }
@@ -102,6 +118,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
         ckbLogoEnvioFragil = new javax.swing.JCheckBox();
         ckbCodigoBarras = new javax.swing.JCheckBox();
         ckbFechaEnvio = new javax.swing.JCheckBox();
+        txtCoincidenciaHist = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Etiqueta de envío");
@@ -171,9 +188,9 @@ public class InterfazImpresion extends javax.swing.JFrame {
 
         txtInfoCont.setColumns(20);
         txtInfoCont.setRows(5);
-        txtInfoCont.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtInfoContFocusLost(evt);
+        txtInfoCont.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtInfoContKeyTyped(evt);
             }
         });
         jScrollPane2.setViewportView(txtInfoCont);
@@ -188,6 +205,14 @@ public class InterfazImpresion extends javax.swing.JFrame {
 
         ckbFechaEnvio.setSelected(true);
         ckbFechaEnvio.setText("Fecha de envío");
+
+        txtCoincidenciaHist.setEditable(false);
+        txtCoincidenciaHist.setFocusable(false);
+        txtCoincidenciaHist.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtCoincidenciaHistMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -240,12 +265,14 @@ public class InterfazImpresion extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane2)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(jLabel11)
-                                            .addComponent(ckbLogoEnvioFragil)
-                                            .addComponent(ckbCodigoBarras)
-                                            .addComponent(ckbFechaEnvio))
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                                            .addComponent(ckbFechaEnvio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(ckbLogoEnvioFragil, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(ckbCodigoBarras, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(txtCoincidenciaHist))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -281,17 +308,19 @@ public class InterfazImpresion extends javax.swing.JFrame {
                     .addComponent(jLabel9)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCoincidenciaHist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ckbLogoEnvioFragil)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ckbCodigoBarras)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ckbFechaEnvio)))
-                .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ckbFechaEnvio)
+                            .addComponent(ckbCodigoBarras)))
+                    .addComponent(jScrollPane1))
+                .addGap(18, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JBtImprimir)
                     .addComponent(btnCerrar)
@@ -303,6 +332,13 @@ public class InterfazImpresion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBtImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBtImprimirActionPerformed
+        // Guardo en el historial de informacion de contenido el texto del 
+        // JText informacion de contenido.
+        if (!APP.configInit.histInfoCont.contains(txtInfoCont.getText())) {
+            APP.configInit.histInfoCont.add(txtInfoCont.getText());
+            System.err.println("Agregado al historial");
+        }
+
         String impresora = cmbDriverImpresora.getSelectedItem().toString();
         PrintService printService = findPrintService(impresora);
 //        String plantilla = "^XA\n"
@@ -481,13 +517,27 @@ public class InterfazImpresion extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
+        APP.configInit.informacionContenido = this.txtInfoCont.getText();
+        APP.guardarConfiguracionInicio();
     }//GEN-LAST:event_formWindowClosing
 
-    private void txtInfoContFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtInfoContFocusLost
+    private void txtInfoContKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInfoContKeyTyped
         // TODO add your handling code here:
-        APP.configInit.txtInformacionContenido = this.txtInfoCont.getText();
-        APP.guardarConfiguracionInicio();
-    }//GEN-LAST:event_txtInfoContFocusLost
+        SwingUtilities.invokeLater(() -> {
+            if (!txtInfoCont.getText().isBlank()) {
+                for (String str : APP.configInit.histInfoCont) {
+                    if (str.contains(txtInfoCont.getText())) {
+                        txtCoincidenciaHist.setText(str);
+                    }
+                }
+            }
+        });
+    }//GEN-LAST:event_txtInfoContKeyTyped
+
+    private void txtCoincidenciaHistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCoincidenciaHistMouseClicked
+        // TODO add your handling code here:
+        txtInfoCont.setText(txtCoincidenciaHist.getText());
+    }//GEN-LAST:event_txtCoincidenciaHistMouseClicked
 
     private PrintService findPrintService(String printerName) {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
@@ -660,6 +710,7 @@ public class InterfazImpresion extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField txtCiudad;
     private javax.swing.JTextField txtCodigoBarras;
+    private javax.swing.JTextField txtCoincidenciaHist;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextArea txtInfoCont;

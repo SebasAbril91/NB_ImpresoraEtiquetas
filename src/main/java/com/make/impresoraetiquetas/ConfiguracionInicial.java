@@ -6,6 +6,7 @@
 package com.make.impresoraetiquetas;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,6 +15,6 @@ import java.io.Serializable;
 public class ConfiguracionInicial implements Serializable {
 
     public Object nombreImpresora = null;
-    public Object txtInformacionContenido = null;
-
+    public String informacionContenido = null;
+    public ArrayList<String> histInfoCont = new ArrayList<>();
 }
